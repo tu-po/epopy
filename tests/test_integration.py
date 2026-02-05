@@ -1,6 +1,7 @@
 
 import pytest
 import os
+from typing import AsyncGenerator, cast, List, Dict, Any
 from epopy import AsyncClient
 from epopy.models import OPSResponse
 
@@ -11,9 +12,11 @@ pytestmark = pytest.mark.skipif(
 )
 
 @pytest.fixture
-async def real_client() -> AsyncClient:
-    key = os.getenv("EPO_CONSUMER_KEY")
-    secret = os.getenv("EPO_CONSUMER_SECRET")
+async def real_client() -> AsyncGenerator[AsyncClient, None]:
+    key = os.getenv("EPO_CONSUMER_KEY", "")
+    secret = os.getenv("EPO_CONSUMER_SECRET", "")
+    if not key or not secret:
+        pytest.skip("EPO credentials not found in environment")
     async with AsyncClient(key, secret) as client:
         yield client
 
@@ -32,8 +35,8 @@ async def test_real_download(real_client: AsyncClient) -> None:
     pub_type = "docdb"
     pub_num = "EP.2950346.A2"
     
-    # First get imagery info
-    images_info = await real_client.published_data.published_data(
+    # First get imagery info to check if docs exist
+    await real_client.published_data.published_data(
         "publication", pub_type, pub_num, "images"
     )
     
@@ -44,13 +47,14 @@ async def test_real_download(real_client: AsyncClient) -> None:
     
     raw_images = await real_client.get_data(f"/published-data/publication/{pub_type}/{pub_num}/images")
     
-    doc_instances = raw_images.get("ops:world-patent-data", {}).get("ops:document-inquiry", {}).get("ops:inquiry-result", {}).get("ops:document-instance", [])
-    if isinstance(doc_instances, dict):
-        doc_instances = [doc_instances]
-        
+    doc_instances_raw = raw_images.get("ops:world-patent-data", {}).get("ops:document-inquiry", {}).get("ops:inquiry-result", {}).get("ops:document-instance", [])
+    doc_instances = cast(List[Dict[str, Any]], [doc_instances_raw] if isinstance(doc_instances_raw, dict) else doc_instances_raw)
+    
     assert len(doc_instances) > 0
     
-    link = doc_instances[0].get("@link")
+    # We take the first one
+    doc = doc_instances[0]
+    link = cast(str, doc.get("@link"))
     assert link is not None
     
     # Download the thumbnail or drawing

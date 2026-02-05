@@ -1,6 +1,7 @@
 import pytest
 import os
 import time
+from typing import List, Any, cast
 from epopy.decisions import DecisionsParser
 
 # Real file path
@@ -12,7 +13,7 @@ def decisions_parser():
         pytest.skip(f"Real XML file not found at {DECISONS_PATH}")
     return DecisionsParser(DECISONS_PATH)
 
-def test_find_decision_t3069_19(decisions_parser):
+def test_find_decision_t3069_19(decisions_parser: DecisionsParser):
     start_time = time.time()
     decision = decisions_parser.find_decision("T 3069/19")
     duration = time.time() - start_time
@@ -26,8 +27,8 @@ def test_find_decision_t3069_19(decisions_parser):
     
     # Verify content snippets from the real file
     # Check some facts/reasons text
-    assert len(decision.facts) > 0, "Facts should not be empty"
-    assert len(decision.reasons) > 0, "Reasons should not be empty"
+    assert len(cast(List[Any], decision.facts)) > 0, "Facts should not be empty"
+    assert len(cast(List[Any], decision.reasons)) > 0, "Reasons should not be empty"
     
     # Check specific text known from the snippet
     assert "Semiconductor radiation detector" in str(decision.metadata)
@@ -68,7 +69,7 @@ def test_parse_decision_code():
     # Let's just use the fixture. If file is missing, we skip everything.
     pass
 
-def test_parse_decision_code_logic(decisions_parser):
+def test_parse_decision_code_logic(decisions_parser: DecisionsParser):
     t, n, y = decisions_parser.parse_decision_code("T 3069/19")
     assert t == "T"
     assert n == "3069"

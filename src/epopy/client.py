@@ -82,3 +82,10 @@ class AsyncClient:
     async def post(self, endpoint: str, **kwargs: Any) -> httpx.Response:
         return await self.request("POST", endpoint, **kwargs)
 
+    def get_patent(self, number: str, format: str = "docdb", reference_type: str = "publication") -> Any:
+        """
+        Get a Patent object for high-level interaction.
+        """
+        from .patent import Patent
+        return Patent(self, number, format=format, type=reference_type)
+

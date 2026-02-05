@@ -2,7 +2,7 @@ import pytest
 
 from typing import AsyncGenerator, Any
 from httpx import Response
-from epo_ops import AsyncClient
+from epopy import AsyncClient
 
 @pytest.fixture
 def consumer_key() -> str:

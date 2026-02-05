@@ -11,3 +11,5 @@ wheels/
 
 # Original EPO OPS docs not included for licensing reasons
 epo-docs
+# Original EPO Boards of Appeal decisions
+epo-decisions

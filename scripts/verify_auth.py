@@ -6,7 +6,7 @@ import json
 # Add src to path
 sys.path.append(os.path.join(os.path.dirname(__file__), "../src"))
 
-from epo_ops.client import AsyncClient
+from epopy.client import AsyncClient
 
 CONSUMER_KEY = "GwHfSU69o9zS2JA4VgPvAnoe1QN7tCrcxQA6ArQUoFYCEzXr"
 CONSUMER_SECRET = "qmcqxn56UaMqTljudJcrlOZs214SNK9hslCsTWmqoQp1nrPXcnI6ZoFRsRRxTA5r"

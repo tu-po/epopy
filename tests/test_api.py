@@ -1,10 +1,10 @@
 import pytest
 
 from httpx import Response
-from epo_ops.models import OPSResponse
+from epopy.models import OPSResponse
 
 from typing import Any
-from epo_ops import AsyncClient
+from epopy import AsyncClient
 
 @pytest.mark.asyncio
 async def test_search_service(client: AsyncClient, mock_token: None, respx_mock: Any) -> None:

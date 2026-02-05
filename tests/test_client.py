@@ -3,7 +3,7 @@ import pytest
 from httpx import Response
 
 from typing import Any
-from epo_ops import AsyncClient
+from epopy import AsyncClient
 
 @pytest.mark.asyncio
 async def test_client_request_headers(client: AsyncClient, mock_token: None, respx_mock: Any) -> None:

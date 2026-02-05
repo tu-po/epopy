@@ -2,7 +2,7 @@ import pytest
 
 import time
 from httpx import Response
-from epo_ops.auth import AuthManager
+from epopy.auth import AuthManager
 
 from typing import Any
 

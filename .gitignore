@@ -13,3 +13,6 @@ wheels/
 epo-docs
 # Original EPO Boards of Appeal decisions
 epo-decisions
+
+# Secrets
+.env

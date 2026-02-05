@@ -25,3 +25,27 @@ class RetrievalService:
         url = f"/published-data/{reference_type}/{input_format}/{number}/{endpoint}"
         data = await self.client.get_data(url)
         return OPSResponse(**data)
+
+    async def download_image(
+        self, 
+        path: str, 
+        range_position: int = 1, 
+        document_format: str = "application/pdf"
+    ) -> bytes:
+        """
+        Download a specific image variant (document instance).
+        
+        Args:
+            path: The link/path to the image resource (e.g. from document-instance @link)
+            range_position: The page range/position (required by OPS for images)
+            document_format: The expected format (Accept header)
+            
+        Returns:
+            The raw bytes of the image/document.
+        """
+        response = await self.client.get(
+            path, 
+            headers={"Accept": document_format}, 
+            params={"Range": str(range_position)}
+        )
+        return response.content

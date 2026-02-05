@@ -19,6 +19,7 @@ dependencies = [
     "mypy>=1.0.0",
     "lxml>=5.0.0",
     "types-lxml>=2026.1.1",
+    "python-dotenv>=1.0.0",
 ]
 
 [tool.pytest.ini_options]

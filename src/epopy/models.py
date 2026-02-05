@@ -28,7 +28,7 @@ class ExchangeDocuments(BaseModel):
 
 class BiblioSearch(BaseModel):
     total_result_count: int = Field(alias="@total-result-count")
-    query: Optional[str] = Field(alias="ops:query", default=None)
+    query: Optional[Any] = Field(alias="ops:query", default=None)
     search_result: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]] = Field(alias="ops:search-result", default=None)
     
 class WorldPatentData(BaseModel):

@@ -4,13 +4,18 @@ from typing import AsyncGenerator, Any
 from httpx import Response
 from epopy import AsyncClient
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 @pytest.fixture
 def consumer_key() -> str:
-    return "fake_key"
+    return os.getenv("EPO_CONSUMER_KEY", "fake_key")
 
 @pytest.fixture
 def consumer_secret() -> str:
-    return "fake_secret"
+    return os.getenv("EPO_CONSUMER_SECRET", "fake_secret")
 
 @pytest.fixture
 async def client(consumer_key: str, consumer_secret: str) -> AsyncGenerator[AsyncClient, None]:

@@ -1,4 +1,4 @@
-from typing import Any, cast, List
+from typing import Any, List
 from httpx import Response
 import pytest
 from epopy import AsyncClient
@@ -38,22 +38,4 @@ async def test_patent_abstraction_mock(client: AsyncClient, mock_token: None, re
     content = await doc.download()
     assert content == b"fake_pdf"
 
-@pytest.mark.asyncio
-async def test_integration_abstractions(client: AsyncClient) -> None:
-    import os
-    if not os.getenv("EPO_CONSUMER_KEY"):
-        pytest.skip("No real credentials")
-        
-    # Use real credentials
-    async with AsyncClient(cast(str, os.getenv("EPO_CONSUMER_KEY")), cast(str, os.getenv("EPO_CONSUMER_SECRET"))) as c:
-        patent = c.get_patent("EP.2950346.A2")
-        docs = await patent.get_documents()
-        assert len(docs) > 0
-        
-        # Test the user-requested attributes
-        doc = docs[0]
-        assert doc.name is not None
-        assert doc.type is not None
-        
-        content = await doc.download()
-        assert len(content) > 0
+

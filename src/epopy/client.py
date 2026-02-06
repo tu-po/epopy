@@ -82,6 +82,12 @@ class AsyncClient:
     async def post(self, endpoint: str, **kwargs: Any) -> httpx.Response:
         return await self.request("POST", endpoint, **kwargs)
 
+    async def search_patents(self, q: str, **kwargs: Any) -> Any:
+        """
+        Search for patents and return high-level Patent objects.
+        """
+        return await self.search.search_patents(q, **kwargs)
+
     def get_patent(self, number: str, format: str = "docdb", reference_type: str = "publication") -> Any:
         """
         Get a Patent object for high-level interaction.

@@ -66,3 +66,22 @@ async def test_real_download(real_client: AsyncClient) -> None:
     else:
         # Might be TIFF or something else depending on OPS, but at least we got bytes
         assert len(content) > 100
+@pytest.mark.asyncio
+async def test_real_patent_abstractions(real_client: AsyncClient) -> None:
+    # Test the high-level Patent/Document integration
+    patent = real_client.get_patent("EP.2950346.A2")
+    assert patent.number == "EP.2950346.A2"
+    
+    docs = await patent.get_documents()
+    assert len(docs) > 0
+    
+    # Check document attributes
+    doc = docs[0]
+    assert doc.name is not None
+    assert doc.type is not None
+    assert len(doc.formats) > 0
+    
+    # Test download via Document abstraction
+    content = await doc.download()
+    assert len(content) > 0
+    assert content.startswith(b"%PDF") or len(content) > 100

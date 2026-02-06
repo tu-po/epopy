@@ -32,21 +32,78 @@ class Document:
         """Heuristic type based on description."""
         return self.description.lower()
 
-    async def download(self, document_format: Optional[str] = None, range_position: int = 1) -> bytes:
+    async def download(self, document_format: Optional[str] = None, range_position: Optional[int | str] = None) -> bytes:
         """
         Download the document content.
         
         Args:
             document_format: Override the format (e.g. 'application/pdf'). 
                            If None, uses the first available format.
-            range_position: The page range/position to download.
+            range_position: The page range/position to download. 
+                          If None, defaults to "1-{number_of_pages}" if known, else "1".
         """
         if not document_format:
             document_format = self.formats[0] if self.formats else "application/pdf"
             
+        # Case 1: Loop and Merge if full document requested and we have > 1 pages
+        if range_position is None and self.number_of_pages and self.number_of_pages > 1 and "pdf" in document_format.lower():
+            import asyncio
+            from io import BytesIO
+            from pypdf import PdfWriter, PdfReader
+            
+            # Sequential download with small delay and retries to avoid 403 Forbidden
+            pages_content = []
+            for i in range(1, self.number_of_pages + 1):
+                # Basic retry logic for transient errors or rate limits
+                last_exc = None
+                for attempt in range(3):
+                    try:
+                        page_bytes = await self.client.published_data.download_image(
+                            self.link, 
+                            range_position=i,
+                            document_format=document_format  # type: ignore
+                        )
+                        pages_content.append(page_bytes)
+                        break
+                    except Exception as e:
+                        last_exc = e
+                        # If we hit RobotDetected, we need a LONG wait
+                        wait_time = 2 ** (attempt + 1)
+                        if "RobotDetected" in str(e):
+                            # Fair use block usually requires a significant pause
+                            wait_time = 60 
+                        
+                        import asyncio
+                        await asyncio.sleep(wait_time)
+                else:
+                    if last_exc:
+                        raise last_exc
+                
+                # Base delay to respect Fair Use Policy
+                await asyncio.sleep(2.0)
+            
+            # Merge
+            merger = PdfWriter()
+            for page_bytes in pages_content:
+                try:
+                    merger.append(PdfReader(BytesIO(page_bytes)))
+                except Exception:
+                    # Skip corrupt/empty pages to keep the final doc readable
+                    pass
+            
+            output = BytesIO()
+            merger.write(output)
+            return output.getvalue()
+
+        # Case 2: Standard single request (default or specific range)
+        # Determine range
+        final_range: int | str = 1
+        if range_position is not None:
+             final_range = range_position
+            
         return await self.client.published_data.download_image(
             self.link, 
-            range_position=range_position, 
+            range_position=final_range, 
             document_format=document_format
         )
 

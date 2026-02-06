@@ -29,7 +29,7 @@ async def test_download_image_success(client: AsyncClient, mock_token: None, res
     # Verify headers and params
     last_request = route.calls.last.request
     assert last_request.headers["Accept"] == "application/pdf"
-    assert last_request.url.params["Range"] == "1"
+    assert last_request.url.params["range"] == "1"
 
 @pytest.mark.asyncio
 async def test_download_image_custom_params(client: AsyncClient, mock_token: None, respx_mock: Any) -> None:
@@ -48,4 +48,4 @@ async def test_download_image_custom_params(client: AsyncClient, mock_token: Non
     
     last_request = route.calls.last.request
     assert last_request.headers["Accept"] == "application/tiff"
-    assert last_request.url.params["Range"] == "2"
+    assert last_request.url.params["range"] == "2"

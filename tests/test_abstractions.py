@@ -31,7 +31,7 @@ async def test_patent_abstraction_mock(client: AsyncClient, mock_token: None, re
     assert doc.link == "path/to/img"
     
     # Mock download
-    respx_mock.get("https://ops.epo.org/3.2/rest-services/path/to/img?Range=1").mock(
+    respx_mock.get("https://ops.epo.org/3.2/rest-services/path/to/img?range=1").mock(
         return_value=Response(200, content=b"fake_pdf")
     )
     

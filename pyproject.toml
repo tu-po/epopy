@@ -20,6 +20,7 @@ dependencies = [
     "lxml>=5.0.0",
     "types-lxml>=2026.1.1",
     "python-dotenv>=1.0.0",
+    "pypdf>=6.6.2",
 ]
 
 [tool.pytest.ini_options]

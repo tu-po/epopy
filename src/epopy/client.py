@@ -59,8 +59,9 @@ class AsyncClient:
             
             headers = kwargs.pop("headers", {})
             headers["Authorization"] = f"Bearer {token}"
+            headers["User-Agent"] = "epopy/0.1.0 (https://github.com/tu-po/epopy)"
             if "Accept" not in headers:
-                headers["Accept"] = "application/xml"  # Request XML by default for consistent parsing
+                headers["Accept"] = "application/xml"
             
             response = await client.request(method, url, headers=headers, **kwargs)
             response.raise_for_status()

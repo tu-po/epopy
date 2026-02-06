@@ -2,6 +2,8 @@
 import pytest
 import os
 from typing import AsyncGenerator, cast, List, Dict, Any
+from io import BytesIO
+from pypdf import PdfReader
 from epopy import AsyncClient
 from epopy.models import OPSResponse
 
@@ -85,3 +87,28 @@ async def test_real_patent_abstractions(real_client: AsyncClient) -> None:
     content = await doc.download()
     assert len(content) > 0
     assert content.startswith(b"%PDF") or len(content) > 100
+    assert content.startswith(b"%PDF") or len(content) > 100
+
+@pytest.mark.asyncio
+async def test_real_pdf_page_count(real_client: AsyncClient) -> None:
+    # Regression test for "1 page download" bug
+    # Target EP3829124 which is known to have ~59 pages
+    patent = real_client.get_patent("EP.3829124.A1")
+    docs = await patent.get_documents()
+    
+    full_doc = next((d for d in docs if d.name == "FullDocument"), None)
+    assert full_doc is not None, "FullDocument not found for EP3829124"
+    assert full_doc.number_of_pages is not None
+    assert full_doc.number_of_pages > 10, f"Expected >10 pages, metadata says {full_doc.number_of_pages}"
+    
+    print(f"Downloading {full_doc.number_of_pages} pages...")
+    content = await full_doc.download()
+    
+    reader = PdfReader(BytesIO(content))
+    actual_pages = len(reader.pages)
+    
+    print(f"Downloaded {len(content)} bytes, {actual_pages} pages")
+    
+    # Assert we got the full document, not just 1 page
+    assert actual_pages > 1, "Downloaded PDF has only 1 page!"
+    assert actual_pages == full_doc.number_of_pages, f"Page count mismatch: expected {full_doc.number_of_pages}, got {actual_pages}"

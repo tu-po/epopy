@@ -1,0 +1,18 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Original EPO OPS docs not included for licensing reasons
+epo-docs
+# Original EPO Boards of Appeal decisions
+epo-decisions
+
+# Secrets
+.env

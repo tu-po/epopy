@@ -145,33 +145,38 @@ source = { editable = "." }
 dependencies = [
     { name = "httpx" },
     { name = "lxml" },
-    { name = "mypy" },
     { name = "pydantic" },
     { name = "pypdf" },
+    { name = "python-dotenv" },
+    { name = "xmltodict" },
+]
+
+[package.optional-dependencies]
+dev = [
+    { name = "mypy" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
     { name = "pytest-cov" },
-    { name = "python-dotenv" },
     { name = "respx" },
     { name = "types-lxml" },
-    { name = "xmltodict" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "httpx", specifier = ">=0.27.0" },
     { name = "lxml", specifier = ">=5.0.0" },
-    { name = "mypy", specifier = ">=1.0.0" },
+    { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.0.0" },
     { name = "pydantic", specifier = ">=2.0.0" },
     { name = "pypdf", specifier = ">=6.6.2" },
-    { name = "pytest", specifier = ">=7.0.0" },
-    { name = "pytest-asyncio", specifier = ">=0.21.0" },
-    { name = "pytest-cov", specifier = ">=4.1.0" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.0.0" },
+    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.21.0" },
+    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=4.1.0" },
     { name = "python-dotenv", specifier = ">=1.0.0" },
-    { name = "respx", specifier = ">=0.20.0" },
-    { name = "types-lxml", specifier = ">=2026.1.1" },
+    { name = "respx", marker = "extra == 'dev'", specifier = ">=0.20.0" },
+    { name = "types-lxml", marker = "extra == 'dev'", specifier = ">=2026.1.1" },
     { name = "xmltodict", specifier = ">=0.13.0" },
 ]
+provides-extras = ["dev"]
 
 [[package]]
 name = "h11"

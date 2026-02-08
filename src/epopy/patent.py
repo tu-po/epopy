@@ -63,13 +63,13 @@ class Document:
             from pypdf import PdfWriter, PdfReader
             
             # Sequential download with small delay and retries to avoid 403 Forbidden
-            pages_content = []
+            pages_content: List[bytes] = []
             for i in range(1, self.number_of_pages + 1):
                 # Basic retry logic for transient errors or rate limits
                 last_exc = None
                 for attempt in range(3):
                     try:
-                        page_bytes = await self.client.published_data.download_image(
+                        page_bytes: bytes = await self.client.published_data.download_image(
                             self.link, 
                             range_position=i,
                             document_format=document_format  # type: ignore

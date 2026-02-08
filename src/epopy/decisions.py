@@ -126,48 +126,35 @@ class DecisionsParser:
         return None
 
     def _extract_decision_data(self, elem: Any, decision_id: str) -> Decision:
+        """Extract metadata and content from an ep-appeal-decision element."""
         # Note: 'elem' is an lxml Element, typed as Any because properly typing lxml is complex without stubs
+        def _get_text(xpath_expr: str, base_elem: Any = elem) -> Optional[str]:
+            """Helper to extract text from an element found via XPath."""
+            found = base_elem.find(xpath_expr)
+            return "".join(found.itertext()) if found is not None else None
+
         bib_data = elem.find('ep-appeal-bib-data')
         
         # Metadata
-        date_decision: Optional[str] = None
-        date_elem = bib_data.find('.//ep-date-of-decision/date')
-        if date_elem is not None:
-            date_decision = str(date_elem.text)
+        date_decision = _get_text('.//ep-date-of-decision/date')
             
-        board: Optional[str] = None
-        board_elem = bib_data.find('ep-board-of-appeal-code')
-        if board_elem is not None:
-            board = str(board_elem.text)
+        board = _get_text('ep-board-of-appeal-code')
             
         keywords: List[str] = []
         kw_elem = elem.find('ep-keywords')
         if kw_elem is not None:
             keywords = [str(k.text) for k in kw_elem.findall('keyword') if k.text]
             
-        def _get_text(xpath_expr: str, base_elem: Any = elem) -> Optional[str]:
-            """Helper to extract text from an element found via XPath."""
-            found = base_elem.find(xpath_expr)
-            return "".join(found.itertext()) if found is not None else None
         headnotes: List[str] = []
         hn_elem = elem.find('ep-headnote')
         if hn_elem is not None:
              headnotes = ["".join(p.itertext()) for p in hn_elem.findall('p')]
              
-        app_num: Optional[str] = None
-        app_ref = bib_data.find('application-reference/document-id/doc-number')
-        if app_ref is not None:
-            app_num = str(app_ref.text)
+        app_num = _get_text('application-reference/document-id/doc-number', bib_data)
             
-        pub_num: Optional[str] = None
-        pub_ref = bib_data.find('publication-reference/document-id/doc-number')
-        if pub_ref is not None:
-            pub_num = str(pub_ref.text)
+        pub_num = _get_text('publication-reference/document-id/doc-number', bib_data)
             
-        title: Optional[str] = None
-        title_elem = bib_data.find('invention-title')
-        if title_elem is not None:
-             title = "".join(title_elem.itertext())
+        title = _get_text('invention-title', bib_data)
             
         ipc_classes: List[str] = []
         # ipc...

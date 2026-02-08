@@ -15,6 +15,17 @@ class Document:
         number_of_pages: Optional[int] = None,
         sections: Optional[List[Dict[str, Any]]] = None
     ):
+        """
+        Initialize a Document instance.
+
+        Args:
+            client: The AsyncClient instance.
+            description: Description of the document (e.g., 'FullDocument', 'Drawing').
+            link: API link to the document content.
+            formats: List of available formats (e.g., ['application/pdf', 'image/tiff']).
+            number_of_pages: Total number of pages in the document.
+            sections: Optional list of specific sections within the document.
+        """
         self.client = client
         self.description = description
         self.link = link
@@ -108,12 +119,22 @@ class Document:
         )
 
     def __repr__(self) -> str:
+        """Return a string representation of the Document."""
         return f"<Document name='{self.name}' pages={self.number_of_pages}>"
 
 class Patent:
     """High-level abstraction for a Patent."""
     
     def __init__(self, client: 'AsyncClient', number: str, format: str = "docdb", type: str = "publication"):
+        """
+        Initialize a Patent instance.
+
+        Args:
+            client: The AsyncClient instance.
+            number: The patent number (e.g., 'EP1234567').
+            format: The number format ('docdb', 'epodoc', 'original').
+            type: The reference type ('publication', 'application', 'priority').
+        """
         self.client = client
         self.number = number
         self.format = format

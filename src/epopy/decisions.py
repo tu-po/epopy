@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class DecisionMetadata:
+    """Metadata for an EPO Board of Appeal decision."""
     decision_id: str
     date_decision: Optional[str]
     board: Optional[str]
@@ -24,6 +25,7 @@ class DecisionMetadata:
     
 @dataclass
 class Decision:
+    """Represents a full EPO Board of Appeal decision including text content."""
     metadata: DecisionMetadata
     full_text: str
     facts: str
@@ -143,6 +145,10 @@ class DecisionsParser:
         if kw_elem is not None:
             keywords = [str(k.text) for k in kw_elem.findall('keyword') if k.text]
             
+        def _get_text(xpath_expr: str, base_elem: Any = elem) -> Optional[str]:
+            """Helper to extract text from an element found via XPath."""
+            found = base_elem.find(xpath_expr)
+            return "".join(found.itertext()) if found is not None else None
         headnotes: List[str] = []
         hn_elem = elem.find('ep-headnote')
         if hn_elem is not None:
